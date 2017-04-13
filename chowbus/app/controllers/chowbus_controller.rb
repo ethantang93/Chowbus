@@ -8,6 +8,9 @@ class ChowbusController < ApplicationController
     if email == "admin@chowbus.com"
       if password == "admin"
         redirect_to '/admin'
+      else
+        flash[:error]="wrong email/password combination"
+        redirect_to :back
       end
     else
       if Rest.find_by_email(email).try(:authenticate, password)
@@ -20,6 +23,7 @@ class ChowbusController < ApplicationController
       end
     end
   end
+
   def admin
     @rests = Rest.all
     @schedules = Schedule.all
@@ -29,71 +33,39 @@ class ChowbusController < ApplicationController
 
   def update_schedule
     days = ["Mon","Tue","Wed","Thur","Fri"]
+    ###   loop through five columns of data
     days.each do |day_loop|
       data = Schedule.find_by(day:day_loop,rest_id:params[:rest_id])
+      ###   check if there are any existing data. if not, then create the data
       if data.blank?
         Schedule.create(day:day_loop,Rest_id:params[:rest_id],Zone_id:params[day_loop])
+      ###   if data already exist then update the Zone_id column
       else
         data.Zone_id = params[day_loop]
         data.save
       end
     end
-    # monday = Schedule.find_by(day:"Mon",rest_id:params[:rest_id])
-    # if monday.blank?
-    #   Schedule.create(day:"Mon",Rest_id:params[:rest_id],Zone_id:params[:"Mon"])
-    # else
-    #   monday.Zone_id = params[:"Mon"]
-    #   monday.save
-    # end
-    #
-    # tuesday = Schedule.find_by(day:"Tue",rest_id:params[:rest_id])
-    # if tuesday.blank?
-    #   Schedule.create(day:"Tue",Rest_id:params[:rest_id],Zone_id:params[:"Tue"])
-    # else
-    #   tuesday.Zone_id = params[:"Tue"]
-    #   tuesday.save
-    # end
-    #
-    # wednesday = Schedule.find_by(day:"Wed",rest_id:params[:rest_id])
-    # if wednesday.blank?
-    #   Schedule.create(day:"Wed",Rest_id:params[:rest_id],Zone_id:params[:"Wed"])
-    # else
-    #   wednesday.Zone_id = params[:"Wed"]
-    #   wednesday.save
-    # end
-    #
-    # thursday = Schedule.find_by(day:"Thur",rest_id:params[:rest_id])
-    # if thursday.blank?
-    #   Schedule.create(day:"Thur",Rest_id:params[:rest_id],Zone_id:params[:"Thur"])
-    # else
-    #   thursday.Zone_id = params[:"Thur"]
-    #   thursday.save
-    # end
-    #
-    # friday = Schedule.find_by(day:"Fri",rest_id:params[:rest_id])
-    # if friday.blank?
-    #   Schedule.create(day:"Fri",Rest_id:params[:rest_id],Zone_id:params[:"Fri"])
-    # else
-    #   friday.Zone_id = params[:"Fri"]
-    #   friday.save
-    # end
     flash[:success]="Update Success"
     redirect_to :back
   end
 
   def allmeal
+    ###   if the first time visit this page params[:date] will be empty
+    ###   Thus first time opening this page, it will be displaying all the avaliable meals
     if params[:date].blank?
       @meals = Meal.all
     else
+      # if day of the week is specified then find the meals avaliable by finding what Restaurant is deliverying on that date
       rest_id = []
       schedules = Schedule.where(day:session[:weekday])
-
       schedules.each do |sch|
         rest_id.push(sch.Rest_id)
       end
-    #  @meals here is used for rendering in html page
+    ###   get rest_id which is the array of ids of the restaurants that's devlierying on that date
+    ###   after getting the ids of restaurants then we can find the meals by doing this query
+    ###   rendering in html page
     @meals = Meal.where(Rest_id:rest_id)
-    #  convert to json
+    ###  convert to json
     return @meals.as_json(root: true)
     end
   end
@@ -101,10 +73,13 @@ class ChowbusController < ApplicationController
   def restaurant
     @meals = Meal.where(Rest_id:session[:rest_user])
   end
+
   def delete_meal
+    ###  find the id of the meal and then delete this data
     Meal.find(params[:id]).destroy
     redirect_to :back
   end
+
   def logout
     session[:rest_user]=nil
     redirect_to '/'
