@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  detail: MyText
+  Rest_id: 
+
+two:
+  detail: MyText
+  Rest_id: 

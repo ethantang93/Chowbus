@@ -1,0 +1,46 @@
+<h1>Chowbus Delivery Management</h1>
+<a href="/">Login Page</a>
+<p>Find me in app/views/chowbus/admin.html.erb</p>
+<table>
+  <thead>
+    <tr>
+      <td>restaurant name</td>
+      <td>location</td>
+      <td>Email</td>
+      <td>Mon</td>
+      <td>Tue</td>
+      <td>Wed</td>
+      <td>Thur</td>
+      <td>Fri</td>
+      <td>confirm change</td>
+    </tr>
+  </thead>
+  <tbody>
+  <% @rests.each do |rest| %>
+    <tr>
+      <td><%= rest.name %></td>
+      <td><%= rest.location %></td>
+      <td><%= rest.email %></td>
+      <form class="" action="/update_schedule/<%= rest.id%>/" method="post">
+        <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+        <% @days.each do |day|%>
+            <td><select class="" name="<%=day%>">
+                <% @zones.each do |zone| %>
+                    <% begin %>
+                    <% if zone.name == rest.Schedule.find_by_day(day).Zone.name%>
+                        <option value="<%= zone.id%>" selected="selected"><%= zone.name%></option>
+                    <% else %>
+                        <option value="<%= zone.id%>"><%= zone.name%></option>
+                    <% end %>
+                    <% rescue %>
+                        <option value="<%= zone.id%>"><%= zone.name%></option>
+                    <% end %>
+                <% end %>
+            </select></td>
+        <% end %>
+        <td><input type="submit" name="submit" value="submit"></td>
+      </form>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

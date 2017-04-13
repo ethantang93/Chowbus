@@ -1,0 +1,31 @@
+<h1>Chowbus </h1>
+<p>Find me in app/views/chowbus/allmeal.html.erb</p>
+<form action="/allmeal" method="">
+  Pick a weekday:
+  <select class="" name="date">
+    <option value="Mon">Monday</option>
+    <option value="Tue">Tuesday</option>
+    <option value="Wed">Wednesday</option>
+    <option value="Thur">Thursday</option>
+    <option value="Fri">Friday</option>
+  </select>
+  <input type="submit" name="submit" value="submit">
+</form>
+<table>
+  <thead>
+    <tr>
+      <td>Meal Id</td>
+      <td>Order Detail</td>
+      <td>Restaurant Name</td>
+    </tr>
+  </thead>
+  <tbody>
+  <% @meals.each do |meal| %>
+    <tr>
+      <td><%= meal.id %></td>
+      <td><%= meal.detail %></td>
+      <td><%= meal.Rest.name %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

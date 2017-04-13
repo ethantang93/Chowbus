@@ -1,0 +1,23 @@
+<h1>Chowbus Restaurant Management Client</h1>
+<a href="/logout">Login Page</a>
+<p>Find me in app/views/chowbus/restaurant.html.erb</p>
+<table>
+  <thead>
+    <tr>
+      <td>Meal Id</td>
+      <td>Order Detail</td>
+      <td>Restaurant Name</td>
+      <td>delete order</td>
+    </tr>
+  </thead>
+  <tbody>
+  <% @meals.each do |meal| %>
+    <tr>
+      <td><%= meal.id %></td>
+      <td><%= meal.detail %></td>
+      <td><%= meal.Rest.name %></td>
+      <td><a href="/delete_meal/<%= meal.id%>">delete</a></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
